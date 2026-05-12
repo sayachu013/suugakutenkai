@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数学サバイバル：究極の重複排除版</title>
+    <title>数学サバイバル：中学3年・完全対応版</title>
     <style>
         :root {
             --primary: #4a90e2; --secondary: #9b59b6; --success: #2ecc71;
@@ -19,7 +19,6 @@
         .home-title h1 { font-size: 1.6rem; margin-bottom: 5px; }
         .system-guide { background: #fff9e6; border: 1px solid #ffeaa7; border-radius: 12px; padding: 15px; margin-bottom: 20px; font-size: 0.8rem; color: #636e72; line-height: 1.6; }
         .system-guide h4 { margin: 0 0 5px 0; color: var(--dark); display: flex; align-items: center; gap: 5px; }
-        .system-guide ul { margin: 0; padding-left: 18px; }
         .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .mode-btn { padding: 15px 8px; border: none; border-radius: 12px; cursor: pointer; color: white; transition: 0.2s; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .mode-btn h3 { margin: 0; font-size: 0.9rem; }
@@ -27,7 +26,6 @@
         .btn-std { background: var(--primary); } .btn-adv { background: var(--adv-color); }
         .btn-factor { background: var(--secondary); } .btn-factor-adv { background: #555; }
         .btn-test { background: var(--test); grid-column: span 2; height: 60px; margin-top: 5px; }
-        .mode-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
         .review-section { margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; }
         .btn-review { background: var(--review); width: 100%; height: 50px; border-radius: 12px; color: white; border: none; cursor: pointer; font-weight: bold; display: none; }
         .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
@@ -36,38 +34,36 @@
         #combo-bar { width: 0%; height: 100%; background: var(--success); transition: width 0.3s; }
         .combo-text { font-weight: bold; color: var(--success); text-align: center; margin-top: 5px; font-size: 0.85rem; }
         .problem-card { background: #fff; border: 3px solid #f0f4f8; border-radius: 15px; padding: 40px 10px; text-align: center; margin-bottom: 20px; position: relative; min-height: 160px; display: flex; align-items: center; justify-content: center; }
-        .mode-badge { position: absolute; top: 10px; left: 10px; padding: 2px 8px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 4px; font-size: 0.7rem; color: #666; }
         .question { font-size: 1.3rem; font-weight: bold; line-height: 1.8; }
         .choices-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .choice-btn { padding: 12px 5px; border: 2px solid #e2e8f0; border-radius: 12px; background: white; font-size: 0.85rem; cursor: pointer; transition: 0.15s; font-weight: bold; min-height: 85px; display: flex; align-items: center; justify-content: center; }
         .choice-btn.correct { background: var(--success) !important; color: white; }
         .choice-btn.wrong { background: var(--error) !important; color: white; }
         .math-text { font-family: "Times New Roman", Times, serif; font-style: italic; }
-        sup { font-style: normal; font-size: 0.7em; vertical-align: super; }
-        .frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: 0.85em; margin: 0 2px; font-style: normal; }
+        .frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: 0.85em; margin: 0 2px; }
         .frac .num { border-bottom: 1px solid currentColor; padding: 0 3px; line-height: 1.1; }
         .frac .den { padding: 0 3px; line-height: 1.1; }
-        #clear-screen { text-align: center; padding-top: 30px; }
+        sup { font-style: normal; font-size: 0.7em; vertical-align: super; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="home-screen" class="screen active">
-        <div class="home-title"><h1>数学サバイバル</h1><p>展開・因数分解 完全マスター</p></div>
+        <div class="home-title"><h1>数学サバイバル</h1><p>中学3年 展開・因数分解</p></div>
         <div class="system-guide">
             <h4>💡 学習システムの案内</h4>
             <ul>
                 <li><strong>10連勝サバイバル：</strong> ミスすると 0 に戻る「一発勝負」モード。</li>
-                <li><strong>自動復習システム：</strong> ミスした問題は自動保存。下の「復習モード」で克服！</li>
+                <li><strong>中学3年生レベル：</strong> 教科書〜高校入試標準レベル。</li>
             </ul>
         </div>
         <div class="grid-menu">
             <button class="mode-btn btn-std" onclick="startGame('expand_std')"><h3>展開：標準</h3><p>基本3公式</p></button>
-            <button class="mode-btn btn-adv" onclick="startGame('expand_adv')"><h3>展開：応用</h3><p>複合・分数など</p></button>
+            <button class="mode-btn btn-adv" onclick="startGame('expand_adv')"><h3>展開：応用</h3><p>分数・置き換え</p></button>
             <button class="mode-btn btn-factor" onclick="startGame('factor_std')"><h3>因数分解：標準</h3><p>公式・共通因数</p></button>
-            <button class="mode-btn btn-factor btn-factor-adv" onclick="startGame('factor_adv')"><h3>因数分解：応用</h3><p>4項・置き換え</p></button>
-            <button class="mode-btn btn-test" onclick="startTest()"><h3>🏁 最終チェックテスト (20問)</h3><p>全範囲からランダムに出題</p></button>
+            <button class="mode-btn btn-factor btn-factor-adv" onclick="startGame('factor_adv')"><h3>因数分解：応用</h3><p>共通因数＋公式</p></button>
+            <button class="mode-btn btn-test" onclick="startTest()"><h3>🏁 最終チェックテスト (20問)</h3><p>中学全範囲から出題</p></button>
         </div>
         <div class="review-section"><button id="review-btn" class="btn-review" onclick="startGame('review_mode')">🔥 復習モード (<span id="review-count">0</span>問)</button></div>
     </div>
@@ -75,14 +71,14 @@
     <div id="game-screen" class="screen">
         <div class="top-nav"><button class="back-home" onclick="goHome()">◀ ホーム</button><div id="diff-label" style="font-size:0.7rem; font-weight:bold; color:#888;"></div></div>
         <div class="progress-area"><div class="combo-container"><div id="combo-bar"></div></div><div class="combo-text" id="combo-text">0 / 10</div></div>
-        <div class="problem-card"><div id="mode-badge" class="mode-badge"></div><div id="question" class="question math-text"></div></div>
+        <div class="problem-card"><div id="mode-badge" style="position:absolute; top:10px; left:10px; font-size:0.7rem; color:#aaa;"></div><div id="question" class="question math-text"></div></div>
         <div id="choices" class="choices-grid"></div>
     </div>
 
-    <div id="clear-screen" class="screen">
-        <div id="clear-icon" style="font-size:3rem">🏆</div>
+    <div id="clear-screen" class="screen" style="text-align:center; padding-top:30px;">
+        <div style="font-size:3rem">🏆</div>
         <h2 id="clear-title">CLEAR!</h2>
-        <div id="score-area" style="display:none; text-align:center;">
+        <div id="score-area" style="display:none;">
             <div style="font-size:3rem; font-weight:bold; color:var(--test); margin: 10px 0;"><span id="final-score">0</span>点</div>
             <p id="eval-text" style="font-weight:bold;"></p>
         </div>
@@ -91,46 +87,33 @@
 </div>
 
 <script>
-    let combo = 0, goal = 10, currentAnswer = "", currentMode = "", reviewList = [], reviewIndex = 0;
-    let isTest = false, testCount = 0, testCorrect = 0, testQueue = [], history = [];
+    let combo = 0, goal = 10, currentAnswer = "", currentMode = "", reviewList = [], history = [];
+    let isTest = false, testCount = 0, testCorrect = 0, testQueue = [];
 
-    // 表示用の数式整形
+    const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+    const reduce = (n, d) => { let common = Math.abs(gcd(n, d)); return [n/common, d/common]; };
+    const rand = (min, max) => { let r = Math.floor(Math.random() * (max - min + 1)) + min; return r === 0 ? rand(min, max) : r; };
+
     function formatMath(t) {
-        if (!t) return "";
-        let res = t.toString()
+        return t.toString()
             .replace(/\^2/g, '<sup>2</sup>')
             .replace(/\b1([a-z\(y])/g, '$1').replace(/\b-1([a-z\(y])/g, '-$1')
-            .replace(/[\+-]0[a-z](\^<sup>\d+<\/sup>)?/g, '')
-            .replace(/--/g, '+').replace(/\+-/g, '-').replace(/^\+/, '').replace(/\(\+/, '(');
-        return res.replace(/(\d+)\/(\d+)/g, '<span class="frac"><span class="num">$1</span><span class="den">$2</span></span>');
+            .replace(/(\d+)\/(\d+)/g, '<span class="frac"><span class="num">$1</span><span class="den">$2</span></span>')
+            .replace(/\+-/g, '-').replace(/--/g, '+');
     }
 
-    // 重複チェック用の「標準化」関数（(x+2)(x+3) も (x+3)(x+2) も同じ文字列にする）
     function normalize(s) {
         return s.replace(/\s/g, '').split(')(').map(p => p.replace(/[\(\)]/g, '')).sort().join(')(');
     }
 
-    function buildPoly(a, b, c) {
-        let t1 = a === 1 ? "x^2" : (a === -1 ? "-x^2" : (a === 0 ? "" : a + "x^2"));
-        let t2 = b === 0 ? "" : (b === 1 ? "+x" : (b === -1 ? "-x" : (b > 0 ? "+" + b : b) + "x"));
-        let t3 = c === 0 ? "" : (c > 0 ? "+" + c : c);
-        let res = (t1 + t2 + t3).replace(/^\+/, '');
-        return res === "" ? "0" : res;
-    }
-
-    const rand = (min, max) => { let r = Math.floor(Math.random() * (max - min + 1)) + min; return r === 0 ? rand(min, max) : r; };
-
     function startGame(m) {
-        isTest = false; currentMode = m; combo = 0; reviewIndex = 0; goal = 10;
-        const labels = { 'expand_std':'展開：標準','expand_adv':'展開：応用','factor_std':'因数分解：標準','factor_adv':'因数分解：応用','review_mode':'🔥 復習' };
-        document.getElementById('diff-label').innerText = labels[m] || "";
+        isTest = false; currentMode = m; combo = 0; goal = 10;
         document.getElementById('score-area').style.display = "none";
         showScreen('game-screen'); updateUI(); generateProblem();
     }
 
     function startTest() {
         isTest = true; testCount = 0; testCorrect = 0; goal = 20;
-        document.getElementById('diff-label').innerText = "🏁 最終テスト";
         document.getElementById('score-area').style.display = "none";
         testQueue = [];
         ['expand_std', 'expand_adv', 'factor_std', 'factor_adv'].forEach(m => { for(let i=0; i<5; i++) testQueue.push(m); });
@@ -148,85 +131,111 @@
 
     function generateProblem() {
         if (isTest && testCount >= goal) { showTestResult(); return; }
-        if (currentMode === 'review_mode' && reviewIndex >= reviewList.length) { document.getElementById('clear-title').innerText = "復習完了！"; showScreen('clear-screen'); return; }
+        if (currentMode === 'review_mode' && reviewList.length === 0) { 
+            document.getElementById('clear-title').innerText = "復習完了！"; showScreen('clear-screen'); return; 
+        }
 
         let m = isTest ? testQueue[testCount] : currentMode;
-        if (currentMode === 'review_mode') { let p = reviewList[reviewIndex]; setupProblemUI(p.q, p.a, p.choices, "復習"); return; }
+        if (currentMode === 'review_mode') {
+            let p = reviewList[0]; setupUI(p.q, p.a, p.choices, "復習"); return;
+        }
 
-        let q, a, choices = [];
-        let attempts = 0;
-        while(attempts < 10) {
-            let n1 = rand(-6, 6), n2 = rand(-6, 6);
-            if (m === 'expand_std') {
-                const sub = rand(0, 2);
-                if (sub === 0) { q = `(x${n1>0?'+':''}${n1})(x${n2>0?'+':''}${n2})`; a = buildPoly(1, n1+n2, n1*n2); choices = [a, buildPoly(1, n1, n1*n2), buildPoly(1, n1+n2, -(n1*n2)), `x^2+${n1*n1}`]; }
-                else if (sub === 1) { q = `(x${n1>0?'+':''}${n1})^2`; a = buildPoly(1, n1*2, n1*n1); choices = [a, buildPoly(1, n1, n1*n1), `x^2+${n1*n1}`, buildPoly(1, -n1*2, n1*n1)]; }
-                else { let num = Math.abs(n1); q = `(x+${num})(x-${num})`; a = `x^2-${num*num}`; choices = [a, `x^2+${num*num}`, `x^2-${num}`, `x^2-${num*2}`]; }
-            } 
-            else if (m === 'expand_adv') {
-                if (Math.random() > 0.5) {
-                    q = `(x+y${n1>0?'+':''}${n1})(x+y${n2>0?'+':''}${n2})`;
-                    a = `(x+y)^2${(n1+n2)!=0?((n1+n2)>0?'+':'-')+Math.abs(n1+n2)+'(x+y)':''}${n1*n2!=0?((n1*n2)>0?'+':'-')+Math.abs(n1*n2):''}`;
-                    choices = [a, `(x+y)^2+${n1*n2}`, `x^2+y^2+${n1*n2}`, `(x+y+${n1})^2` ];
-                } else {
-                    const d = [2, 3, 4][rand(0,2)]; q = `(x + 1/${d})^2`; a = `x^2 + 2/${d}x + 1/${d*d}`;
-                    choices = [a, `x^2 + 1/${d}x + 1/${d*d}`, `x^2 + 2/${d}x + 1/${d*2}`, `x^2 + 1/${d*d}`];
-                }
+        let q, a, choices = [], attempts = 0;
+        while(attempts < 50) {
+            let res = buildProblemData(m);
+            if (!history.includes(res.q)) {
+                q = res.q; a = res.a; choices = res.choices;
+                history.push(q); if(history.length > 10) history.shift();
+                break;
             }
-            else if (m === 'factor_std') {
-                q = buildPoly(1, n1+n2, n1*n2);
-                a = (n1 === n2) ? `(x${n1>0?'+':''}${n1})^2` : (n1 === -n2) ? `(x+${Math.abs(n1)})(x-${Math.abs(n1)})` : `(x${n1>0?'+':''}${n1})(x${n2>0?'+':''}${n2})`;
-                choices = [a, `(x-${n1})(x-${n2})`, `x(x+${n1+n2})`, `(x+${n1*n2})(x+1)` ];
-            }
-            else { // factor_adv
-                const type = rand(0, 2);
-                if (type === 0) { const c = rand(2,3); const sq = [4, 9, 16][rand(0,2)]; q = `${c}x^2 - ${c*sq}`; a = `${c}(x+${Math.sqrt(sq)})(x-${Math.sqrt(sq)})`; choices = [a, `${c}(x^2-${sq})`, `(x+${sq})(x-${sq})`, `${c}(x-${sq})^2` ]; }
-                else if (type === 1) { const c1='a', c2='b'; q = `x${c1}${n1>0?'+':''}${n1}${c1}+x${c2}${n1>0?'+':''}${n1}${c2}`; a = `(x${n1>0?'+':''}${n1})(${c1}+${c2})`; choices = [a, `(x+${c1})(x+${c2})`, `${c1}${c2}(x+${n1})`, `x(${c1}+${c2})` ]; }
-                else { const num = [4, 9, 16][rand(0,2)]; q = `(x+y)^2 - ${num}`; a = `(x+y+${Math.sqrt(num)})(x+y-${Math.sqrt(num)})`; choices = [a, `(x+y-${num})^2`, `x^2+y^2-${num}`, `(x+y)(x+y-${num})` ]; }
-            }
-            if (!history.includes(q)) { history.push(q); if(history.length > 5) history.shift(); break; }
             attempts++;
         }
-        setupProblemUI(q, a, choices, m);
+        setupUI(q, a, choices, m);
     }
 
-    function setupProblemUI(q, a, ch, badge) {
+    function buildProblemData(m) {
+        let q, a, ch = [];
+        if (m === 'expand_std') {
+            let type = rand(0, 2);
+            if (type === 0) { // (x+a)(x+b)
+                let n1 = rand(-6, 6), n2 = rand(-6, 6); if(n1===n2) n2++;
+                q = `(x${n1>=0?'+':''}${n1})(x${n2>=0?'+':''}${n2})`;
+                a = `x^2${(n1+n2)>0?'+':''}${n1+n2===0?'':(n1+n2)+'x'}${n1*n2>0?'+':''}${n1*n2===0?'':n1*n2}`;
+                ch = [a, `x^2+${n1*n2}`, `x^2+${n1+n2}x`, `x^2-${n1*n2}`];
+            } else if (type === 1) { // (x+a)^2
+                let n = rand(1, 8); q = `(x+${n})^2`;
+                a = `x^2+${2*n}x+${n*n}`;
+                ch = [a, `x^2+${n*n}`, `x^2+${n}x+${n*n}`, `x^2+${2*n}x+${2*n}`];
+            } else { // (x+a)(x-a)
+                let n = rand(1, 9); q = `(x+${n})(x-${n})`;
+                a = `x^2-${n*n}`; ch = [a, `x^2+${n*n}`, `x^2-${n}`, `x^2-${2*n}`];
+            }
+        } else if (m === 'expand_adv') {
+            if (Math.random() > 0.5) { // 置き換え利用の展開
+                let n1 = rand(-2, 2), n2 = rand(-2, 2); if(n1===0 && n2===0) {n1=1; n2=-1;}
+                q = `(x+y${n1>=0?'+':''}${n1})(x+y${n2>=0?'+':''}${n2})`;
+                let s = n1+n2, p = n1*n2;
+                a = `(x+y)^2${s>0?'+':''}${s===0?'':s+'(x+y)'}${p>0?'+':''}${p===0?'':p}`;
+                ch = [a, `x^2+y^2+${p}`, `(x+y)^2+${p}`, `x+y+${p}`];
+            } else { // 分数
+                let d = [2, 4][rand(0,1)];
+                let [rn, rd] = reduce(2, d), [sn, sd] = reduce(1, d*d);
+                q = `(x + 1/${d})^2`; a = `x^2 + ${rn}/${rd}x + ${sn}/${sd}`;
+                ch = [a, `x^2 + 1/${d}x + ${sn}/${sd}`, `x^2 + ${rn}/${rd}x + 1/${d}`, `x^2 + ${sn}/${sd}`];
+            }
+        } else if (m === 'factor_std') {
+            let n1 = rand(-5, 5), n2 = rand(-5, 5); if(n1===0) n1=1;
+            q = `x^2${(n1+n2)>0?'+':''}${n1+n2===0?'':(n1+n2)+'x'}${n1*n2>0?'+':''}${n1*n2===0?'':n1*n2}`;
+            a = (n1===n2) ? `(x${n1>0?'+':''}${n1})^2` : `(x${n1>0?'+':''}${n1})(x${n2>0?'+':''}${n2})`;
+            ch = [a, `(x-${n1})(x-${n2})`, `(x+${n1*n2})(x+1)`, `x(x+${n1+n2})`];
+        } else {
+            let type = rand(0, 1);
+            if (type === 0) { // 共通因数くくりだし
+                let k = rand(2, 3), n = [4, 9, 16][rand(0,2)];
+                q = `${k}x^2-${k*n}`;
+                let sq = Math.sqrt(n);
+                a = `${k}(x+${sq})(x-${sq})`;
+                ch = [a, `${k}(x^2-${n})`, `(x+${sq})(x-${sq})`, `(x-${n})^2`];
+            } else { // 置き換え (x+y)
+                let n = [4, 9, 16][rand(0,2)], sq = Math.sqrt(n);
+                q = `(x+y)^2-${n}`; a = `(x+y+${sq})(x+y-${sq})`;
+                ch = [a, `(x+y-${sq})^2`, `(x-y+${sq})(x-y-${sq})`, `(x+y+${n})(x+y-1)`];
+            }
+        }
+        return {q, a, choices: ch};
+    }
+
+    function setupUI(q, a, ch, badge) {
         currentAnswer = a;
         document.getElementById('question').innerHTML = formatMath(q);
         document.getElementById('mode-badge').innerText = badge;
         const container = document.getElementById('choices');
         container.innerHTML = "";
-        
-        // 重複排除ロジック： normalize関数を使って数学的に同一な選択肢を消す
-        let uniqueChoices = [];
-        let seen = new Set();
-        ch.forEach(c => {
-            let n = normalize(c);
-            if (!seen.has(n)) { seen.add(n); uniqueChoices.push(c); }
-        });
 
-        uniqueChoices.sort(() => Math.random() - 0.5).forEach(c => {
+        let unique = []; let seen = new Set();
+        ch.forEach(c => { let n = normalize(c); if(!seen.has(n)){ seen.add(n); unique.push(c); }});
+        while(unique.length < 4) unique.push("解答なし");
+
+        unique.sort(() => Math.random() - 0.5).slice(0,4).forEach(c => {
             const btn = document.createElement('button');
             btn.className = "choice-btn math-text";
             btn.innerHTML = formatMath(c);
-            btn.onclick = () => check(btn, c, {q, a, choices:uniqueChoices});
+            btn.onclick = () => {
+                const btns = document.querySelectorAll('.choice-btn'); btns.forEach(b => b.disabled = true);
+                if (normalize(c) === normalize(currentAnswer)) {
+                    btn.classList.add('correct');
+                    if(isTest){ testCorrect++; testCount++; } else if(currentMode === 'review_mode'){ reviewList.shift(); } else { combo++; }
+                } else {
+                    btn.classList.add('wrong');
+                    if(!reviewList.some(p => p.q === q)) reviewList.push({q, a, choices:unique});
+                    if(isTest) testCount++; else if(currentMode === 'review_mode') { reviewList.push(reviewList.shift()); } else { combo = 0; }
+                    btns.forEach(b => { if(normalize(b.innerText) === normalize(currentAnswer)) b.classList.add('correct'); });
+                }
+                updateUI();
+                setTimeout(isTest && testCount >= goal ? showTestResult : generateProblem, 1000);
+            };
             container.appendChild(btn);
         });
-    }
-
-    function check(btn, val, data) {
-        const btns = document.querySelectorAll('.choice-btn'); btns.forEach(b => b.disabled = true);
-        if (normalize(val) === normalize(currentAnswer)) {
-            btn.classList.add('correct');
-            if (isTest) { testCorrect++; testCount++; } else if (currentMode === 'review_mode') { reviewList.splice(reviewIndex, 1); } else { combo++; }
-        } else {
-            btn.classList.add('wrong');
-            if (!reviewList.some(p => p.q === data.q)) reviewList.push(data);
-            if (isTest) testCount++; else if (currentMode === 'review_mode') reviewIndex++; else combo = 0;
-            btns.forEach(b => { if(normalize(b.innerText) === normalize(currentAnswer)) b.classList.add('correct'); });
-        }
-        updateUI();
-        setTimeout(isTest && testCount >= goal ? showTestResult : generateProblem, 1000);
     }
 
     function updateUI() {
