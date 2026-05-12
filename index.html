@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数学サバイバル：完全攻略版</title>
+    <title>数学サバイバル：展開・因数分解【完全版】</title>
     <style>
         :root {
             --primary: #4a90e2; --secondary: #9b59b6; --success: #2ecc71;
@@ -11,66 +11,61 @@
             --dark: #34495e; --review: #ff7675; --adv-color: #ff9f43;
             --test: #1abc9c;
         }
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        body { font-family: 'Helvetica Neue', Arial, "Hiragino Kaku Gothic ProN", sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         .container { width: 100%; max-width: 500px; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; min-height: 600px; display: flex; flex-direction: column; }
         
         .screen { display: none; flex-direction: column; height: 100%; }
         .screen.active { display: flex; }
 
-        /* ホーム画面スタイル */
+        /* ホーム画面 */
         .home-title { text-align: center; color: var(--dark); margin-bottom: 20px; }
         .home-title h1 { font-size: 1.6rem; margin-bottom: 5px; }
 
-        /* 説明文エリア */
         .system-guide { 
             background: #fff9e6; border: 1px solid #ffeaa7; border-radius: 12px; 
-            padding: 15px; margin-bottom: 20px; font-size: 0.8rem; color: #636e72; line-height: 1.5;
+            padding: 15px; margin-bottom: 20px; font-size: 0.8rem; color: #636e72; line-height: 1.6;
         }
         .system-guide h4 { margin: 0 0 5px 0; color: var(--dark); display: flex; align-items: center; gap: 5px; }
         .system-guide ul { margin: 0; padding-left: 18px; }
-        .system-guide li { margin-bottom: 3px; }
+        .system-guide li { margin-bottom: 5px; }
 
         .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .mode-btn { padding: 15px 8px; border: none; border-radius: 12px; cursor: pointer; color: white; transition: 0.3s; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .mode-btn { padding: 15px 8px; border: none; border-radius: 12px; cursor: pointer; color: white; transition: 0.2s; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .mode-btn h3 { margin: 0; font-size: 0.9rem; }
         .mode-btn p { margin: 5px 0 0; opacity: 0.9; font-size: 0.65rem; line-height: 1.2; }
         
-        .btn-std { background: var(--primary); }
-        .btn-adv { background: var(--adv-color); }
-        .btn-factor { background: var(--secondary); }
-        .btn-factor-adv { background: #555; }
+        .btn-std { background: var(--primary); } .btn-adv { background: var(--adv-color); }
+        .btn-factor { background: var(--secondary); } .btn-factor-adv { background: #555; }
         .btn-test { background: var(--test); grid-column: span 2; height: 60px; margin-top: 5px; }
         
         .mode-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
         .review-section { margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; }
-        .btn-review { background: var(--review); width: 100%; height: 55px; border-radius: 12px; color: white; border: none; cursor: pointer; font-weight: bold; display: none; }
+        .btn-review { background: var(--review); width: 100%; height: 50px; border-radius: 12px; color: white; border: none; cursor: pointer; font-weight: bold; display: none; }
 
-        /* ゲーム/テスト画面共通 */
+        /* ゲーム画面 */
         .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .back-home { background: #eee; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: bold; }
         .combo-container { background: #eee; height: 10px; border-radius: 5px; overflow: hidden; }
         #combo-bar { width: 0%; height: 100%; background: var(--success); transition: width 0.3s; }
         .combo-text { font-weight: bold; color: var(--success); text-align: center; margin-top: 5px; font-size: 0.85rem; }
 
-        .problem-card { background: #fff; border: 3px solid #f0f4f8; border-radius: 15px; padding: 40px 10px; text-align: center; margin-bottom: 20px; position: relative; min-height: 150px; display: flex; align-items: center; justify-content: center; }
+        .problem-card { background: #fff; border: 3px solid #f0f4f8; border-radius: 15px; padding: 40px 10px; text-align: center; margin-bottom: 20px; position: relative; min-height: 160px; display: flex; align-items: center; justify-content: center; }
         .mode-badge { position: absolute; top: 10px; left: 10px; padding: 2px 8px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 4px; font-size: 0.7rem; color: #666; }
         .question { font-size: 1.3rem; font-weight: bold; line-height: 1.8; }
 
         .choices-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .choice-btn { padding: 12px 5px; border: 2px solid #e2e8f0; border-radius: 12px; background: white; font-size: 0.85rem; cursor: pointer; transition: 0.15s; font-weight: bold; min-height: 85px; display: flex; align-items: center; justify-content: center; }
-        .choice-btn.correct { background: var(--success) !important; color: white; border-color: var(--success); }
-        .choice-btn.wrong { background: var(--error) !important; color: white; border-color: var(--error); }
+        .choice-btn { padding: 12px 5px; border: 2px solid #e2e8f0; border-radius: 12px; background: white; font-size: 0.85rem; cursor: pointer; transition: 0.1s; font-weight: bold; min-height: 85px; display: flex; align-items: center; justify-content: center; }
+        .choice-btn.correct { background: var(--success) !important; color: white; }
+        .choice-btn.wrong { background: var(--error) !important; color: white; }
 
         .math-text { font-family: "Times New Roman", Times, serif; font-style: italic; }
         sup { font-style: normal; font-size: 0.7em; vertical-align: super; }
         .frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: 0.85em; margin: 0 2px; font-style: normal; }
         .frac .num { border-bottom: 1px solid currentColor; padding: 0 3px; line-height: 1.1; }
         .frac .den { padding: 0 3px; line-height: 1.1; }
-
         #clear-screen { text-align: center; padding-top: 30px; }
         .score-display { font-size: 4rem; font-weight: bold; color: var(--test); margin: 20px 0; }
-        .eval-text { font-size: 1.1rem; font-weight: bold; color: var(--dark); margin-bottom: 20px; }
     </style>
 </head>
 <body>
@@ -85,8 +80,8 @@
         <div class="system-guide">
             <h4>💡 学習システムの案内</h4>
             <ul>
-                <li><strong>10連勝サバイバル：</strong> 各単元のコースは10回連続で正解するとクリア。1問でもミスするとカウントが 0 に戻る「一発勝負」です。</li>
-                <li><strong>自動復習システム：</strong> ミスした問題は自動的に「復習リスト」に記録されます。ホーム画面下の「復習モード」でいつでも解き直しが可能です。</li>
+                <li><strong>10連勝サバイバル：</strong> ミスすると 0 に戻る「一発勝負」モード。</li>
+                <li><strong>自動復習システム：</strong> ミスした問題は自動保存。下の「復習モード」で克服！</li>
             </ul>
         </div>
 
@@ -95,7 +90,7 @@
             <button class="mode-btn btn-adv" onclick="startGame('expand_adv')"><h3>展開：応用</h3><p>複合・分数など</p></button>
             <button class="mode-btn btn-factor" onclick="startGame('factor_std')"><h3>因数分解：標準</h3><p>公式・共通因数</p></button>
             <button class="mode-btn btn-factor btn-factor-adv" onclick="startGame('factor_adv')"><h3>因数分解：応用</h3><p>4項・置き換え</p></button>
-            <button class="mode-btn btn-test" onclick="startTest()"><h3>🏁 最終チェックテスト (20問)</h3><p>全範囲からランダム・ミスしても戻りません</p></button>
+            <button class="mode-btn btn-test" onclick="startTest()"><h3>🏁 最終チェックテスト (20問)</h3><p>全範囲からランダムに測定</p></button>
         </div>
 
         <div class="review-section">
@@ -124,9 +119,9 @@
     <div id="clear-screen" class="screen">
         <div id="clear-icon" style="font-size:3rem">🏆</div>
         <h2 id="clear-title">CLEAR!</h2>
-        <div id="score-area" style="display:none;">
+        <div id="score-area" style="display:none; text-align:center;">
             <div class="score-display"><span id="final-score">0</span>点</div>
-            <div id="eval-text" class="eval-text"></div>
+            <p id="eval-text" style="font-weight:bold; color:var(--dark);"></p>
         </div>
         <p id="clear-msg">お疲れ様でした！</p>
         <button class="mode-btn btn-std" onclick="goHome()" style="margin-top:20px; width:100%;">ホームへ戻る</button>
@@ -135,21 +130,31 @@
 
 <script>
     let combo = 0, goal = 10, currentAnswer = "", currentMode = "", reviewList = [], reviewIndex = 0;
-    let isTestMode = false, testCount = 0, testCorrect = 0, testQueue = [];
+    let isTest = false, testCount = 0, testCorrect = 0, testQueue = [], history = [];
 
-    function formatMath(t) {
+    function cleanMath(t) {
         if (!t) return "";
-        let res = t.toString().replace(/\^2/g, '<sup>2</sup>')
-            .replace(/\+1([a-z\(y])/g, '+$1').replace(/-1([a-z\(y])/g, '-$1')
-            .replace(/\+0[a-z]/g, '').replace(/--/g, '+').replace(/\+-/g, '-')
-            .replace(/^\+/, '').replace(/\(\+/, '(');
+        let res = t.toString()
+            .replace(/\^2/g, '<sup>2</sup>')
+            .replace(/\b1([a-z\(y])/g, '$1')  // 1x -> x, 1( -> (
+            .replace(/\b-1([a-z\(y])/g, '-$1') // -1x -> -x
+            .replace(/[\+-]0[a-z](\^<sup>\d+<\/sup>)?/g, '') // 0項の消去
+            .replace(/--/g, '+').replace(/\+-/g, '-').replace(/^\+/, '').replace(/\(\+/, '(');
         return res.replace(/(\d+)\/(\d+)/g, '<span class="frac"><span class="num">$1</span><span class="den">$2</span></span>');
+    }
+
+    function buildPoly(a, b, c) {
+        let t1 = a === 1 ? "x^2" : (a === -1 ? "-x^2" : (a === 0 ? "" : a + "x^2"));
+        let t2 = b === 0 ? "" : (b === 1 ? "+x" : (b === -1 ? "-x" : (b > 0 ? "+" + b : b) + "x"));
+        let t3 = c === 0 ? "" : (c > 0 ? "+" + c : c);
+        let res = (t1 + t2 + t3).replace(/^\+/, '');
+        return res === "" ? "0" : res;
     }
 
     const rand = (min, max) => { let r = Math.floor(Math.random() * (max - min + 1)) + min; return r === 0 ? rand(min, max) : r; };
 
     function startGame(m) {
-        isTestMode = false; currentMode = m; combo = 0; reviewIndex = 0; goal = 10;
+        isTest = false; currentMode = m; combo = 0; reviewIndex = 0; goal = 10;
         const labels = { 'expand_std':'展開：標準','expand_adv':'展開：応用','factor_std':'因数分解：標準','factor_adv':'因数分解：応用','review_mode':'🔥 復習' };
         document.getElementById('diff-label').innerText = labels[m] || "";
         document.getElementById('score-area').style.display = "none";
@@ -157,7 +162,7 @@
     }
 
     function startTest() {
-        isTestMode = true; testCount = 0; testCorrect = 0; goal = 20;
+        isTest = true; testCount = 0; testCorrect = 0; goal = 20;
         document.getElementById('diff-label').innerText = "🏁 最終チェックテスト";
         document.getElementById('score-area').style.display = "none";
         testQueue = [];
@@ -178,124 +183,110 @@
     }
 
     function generateProblem() {
-        if (isTestMode && testCount >= goal) { showTestResult(); return; }
+        if (isTest && testCount >= goal) { showTestResult(); return; }
         if (currentMode === 'review_mode' && reviewIndex >= reviewList.length) { 
             document.getElementById('clear-title').innerText = "復習完了！";
             document.getElementById('clear-msg').innerText = "苦手な問題を克服しました。";
             showScreen('clear-screen'); return; 
         }
 
-        let mToUse = isTestMode ? testQueue[testCount] : currentMode;
-        if (currentMode === 'review_mode') {
-            let p = reviewList[reviewIndex];
-            setupProblemUI(p.q, p.a, p.choices, "復習"); return;
-        }
+        let m = isTest ? testQueue[testCount] : currentMode;
+        if (currentMode === 'review_mode') { let p = reviewList[reviewIndex]; setupProblemUI(p.q, p.a, p.choices, "復習"); return; }
 
         let q, a, choices = [];
-        let n1 = rand(-5, 5), n2 = rand(-5, 5);
+        let attempts = 0;
 
-        if (mToUse === 'expand_std') {
-            const sub = Math.floor(Math.random() * 3);
-            if (sub === 0) { q = `(x${n1>0?'+':''}${n1})(x${n2>0?'+':''}${n2})`; a = `x^2${(n1+n2)>0?'+':''}${n1+n2}x${(n1*n2)>0?'+':''}${n1*n2}`; }
-            else if (sub === 1) { q = `(x${n1>0?'+':''}${n1})^2`; a = `x^2${(n1*2)>0?'+':''}${n1*2}x+${n1*n1}`; }
-            else { let num = Math.abs(n1); q = `(x+${num})(x-${num})`; a = `x^2-${num*num}`; }
-            choices = [a, `x^2+${n1*n1}`, `x^2${(n1+n2)>0?'+':''}${n1+n2}x`, `(x+${n1})^2` ];
-        } 
-        else if (mToUse === 'expand_adv') {
-            if (Math.random() > 0.5) {
-                q = `(x+y${n1>0?'+':''}${n1})(x+y${n2>0?'+':''}${n2})`;
-                let s = n1+n2, p = n1*n2; a = `(x+y)^2${s>0?'+'+s:s}(x+y)${p>0?'+'+p:p}`;
-                choices = [a, `(x+y)^2+${p}`, `x^2+y^2+${s}(x+y)+${p}`, `x+y+${s}`];
-            } else {
-                const s = rand(1,3); q = `(x+${s})^2 - (x+${s})(x-${s})`; a = `${s*2}x+${s*s*2}`;
-                choices = [a, `${s*2}x`, `2x^2+${s*2}x`, `${s*s*2}` ];
+        while(attempts < 10) {
+            let n1 = rand(-6, 6), n2 = rand(-6, 6);
+            if (m === 'expand_std') {
+                const sub = rand(0, 2);
+                if (sub === 0) { q = `(x${n1>0?'+':''}${n1})(x${n2>0?'+':''}${n2})`; a = buildPoly(1, n1+n2, n1*n2); }
+                else if (sub === 1) { q = `(x${n1>0?'+':''}${n1})^2`; a = buildPoly(1, n1*2, n1*n1); }
+                else { let num = Math.abs(n1); q = `(x+${num})(x-${num})`; a = buildPoly(1, 0, -(num*num)); }
+                choices = [a, buildPoly(1, n1, n1*n1), buildPoly(1, n1+n2, -(n1*n2)), `x^2+${n1*n1}`];
+            } 
+            else if (m === 'expand_adv') {
+                if (Math.random() > 0.5) {
+                    q = `(x+y${n1>0?'+':''}${n1})(x+y${n2>0?'+':''}${n2})`;
+                    let s = n1+n2, p = n1*n2;
+                    a = `(x+y)^2${s!=0?(s>0?'+'+s:s)+'(x+y)':''}${p!=0?(p>0?'+'+p:p):''}`;
+                    choices = [a, `(x+y)^2+${p}`, `x^2+y^2+${p}`, `(x+y+${n1})^2` ];
+                } else {
+                    const d = [2, 3, 4][rand(0,2)]; q = `(x + 1/${d})^2`; a = `x^2 + 2/${d}x + 1/${d*d}`;
+                    choices = [a, `x^2 + 1/${d}x + 1/${d*d}`, `x^2 + 2/${d}x + 1/${d*2}`, `x^2 + 1/${d*d}`];
+                }
             }
-        }
-        else if (mToUse === 'factor_std') {
-            const sub = Math.floor(Math.random() * 2);
-            if (sub === 0) {
-                const c = rand(2, 4); q = `${c}x^2 + ${c*rand(1, 4)}x`; a = `${c}x(x+${q.split('+')[1].replace('x','')/c})`;
-            } else {
-                const s = n1+n2, p = n1*n2; q = `x^2${s>0?'+':''}${s}x${p>0?'+':''}${p}`;
+            else if (m === 'factor_std') {
+                const s = n1+n2, p = n1*n2; q = buildPoly(1, s, p);
                 a = (n1 === n2) ? `(x${n1>0?'+':''}${n1})^2` : (n1 === -n2) ? `(x+${Math.abs(n1)})(x-${Math.abs(n1)})` : `(x${n1>0?'+':''}${n1})(x${n2>0?'+':''}${n2})`;
+                choices = [a, `(x-${n1})(x-${n2})`, `x(x+${s})+${p}`, `(x+${p})(x+1)` ];
             }
-            choices = [a, `(x-${n1})(x-${n2})`, `x(x+${n1+n2})+${n1*n2}`, `(x+${n1*n2})(x+1)` ];
-        }
-        else { // factor_adv
-            const type = Math.floor(Math.random() * 3);
-            if (type === 0) { 
-                const c = rand(2,3); const sq = [1, 4, 9][rand(0,2)];
-                q = `${c}x^2 - ${c*sq}`; a = `${c}(x+${Math.sqrt(sq)})(x-${Math.sqrt(sq)})`;
-                choices = [a, `${c}(x^2-${sq})`, `${c}(x-${sq})^2`, `(x+${sq})(x-${sq})` ];
-            } else if (type === 1) {
-                const c1 = 'a', c2 = 'b';
-                q = `x${c1} ${n1>0?'+':''}${n1}${c1} + x${c2} ${n1>0?'+':''}${n1}${c2}`;
-                a = `(x${n1>0?'+':''}${n1})(${c1}+${c2})`;
-                choices = [a, `(x+${c1})(x+${c2})`, `${c1}${c2}(x+${n1})`, `x(${c1}+${c2})+${n1}`];
-            } else {
-                q = `x^2 ${n1*2>0?'+':''}${n1*2}x + ${n1*n1} - y^2`;
-                a = `(x${n1>0?'+':''}${n1}+y)(x${n1>0?'+':''}${n1}-y)`;
-                choices = [a, `(x${n1>0?'+':''}${n1}+y)^2`, `x^2-(y+${n1})^2`, `(x+y+${n1*n1})(x-y)` ];
+            else { // factor_adv
+                const type = rand(0, 2);
+                if (type === 0) { 
+                    const c = rand(2,3); const sq = [4, 9, 16][rand(0,2)];
+                    q = `${c}x^2 - ${c*sq}`; a = `${c}(x+${Math.sqrt(sq)})(x-${Math.sqrt(sq)})`;
+                    choices = [a, `${c}(x^2-${sq})`, `${c}(x-${sq})^2`, `(x+${sq})(x-${sq})` ];
+                } else if (type === 1) {
+                    const c1 = 'a', c2 = 'b'; q = `x${c1} ${n1>0?'+':''}${n1}${c1} + x${c2} ${n1>0?'+':''}${n1}${c2}`;
+                    a = `(x${n1>0?'+':''}${n1})(${c1}+${c2})`;
+                    choices = [a, `(x+${c1})(x+${c2})`, `${c1}${c2}(x+${n1})`, `x(${c1}+${c2})+${n1}`];
+                } else {
+                    q = `x^2 ${n1*2>0?'+':''}${n1*2}x + ${n1*n1} - y^2`;
+                    a = `(x${n1>0?'+':''}${n1}+y)(x${n1>0?'+':''}${n1}-y)`;
+                    choices = [a, `(x${n1>0?'+':''}${n1}+y)^2`, `x^2-(y+${n1})^2`, `(x+y+${n1*n1})(x-y)` ];
+                }
             }
+            if (!history.includes(q)) { history.push(q); if(history.length > 5) history.shift(); break; }
+            attempts++;
         }
-        setupProblemUI(q, a, choices, mToUse);
+        setupProblemUI(q, a, choices, m);
     }
 
-    function setupProblemUI(q, a, choices, badge) {
-        currentAnswer = a; document.getElementById('question').innerHTML = formatMath(q);
+    function setupProblemUI(q, a, ch, badge) {
+        currentAnswer = a; document.getElementById('question').innerHTML = cleanMath(q);
         document.getElementById('mode-badge').innerText = badge;
         const container = document.getElementById('choices'); container.innerHTML = "";
-        [...new Set(choices)].sort(() => Math.random() - 0.5).forEach(c => {
+        [...new Set(ch)].sort(() => Math.random() - 0.5).forEach(c => {
             const btn = document.createElement('button'); btn.className = "choice-btn math-text";
-            btn.innerHTML = formatMath(c); btn.onclick = () => check(btn, c, {q, a, choices});
+            btn.innerHTML = cleanMath(c); btn.onclick = () => check(btn, c, {q, a, choices:ch});
             container.appendChild(btn);
         });
     }
 
-    function check(btn, val, probData) {
+    function check(btn, val, data) {
         const btns = document.querySelectorAll('.choice-btn'); btns.forEach(b => b.disabled = true);
-        if (val === currentAnswer) {
+        const correctFormatted = cleanMath(currentAnswer);
+        if (btn.innerHTML === correctFormatted) {
             btn.classList.add('correct');
-            if (isTestMode) { testCorrect++; testCount++; } 
+            if (isTest) { testCorrect++; testCount++; } 
             else if (currentMode === 'review_mode') { reviewList.splice(reviewIndex, 1); } 
             else { combo++; }
         } else {
             btn.classList.add('wrong');
-            if (!reviewList.some(p => p.q === probData.q)) reviewList.push(probData);
-            if (isTestMode) { testCount++; } 
-            else if (currentMode === 'review_mode') { reviewIndex++; } 
-            else { combo = 0; }
-            btns.forEach(b => { if(b.innerHTML === formatMath(currentAnswer)) b.classList.add('correct'); });
+            if (!reviewList.some(p => p.q === data.q)) reviewList.push(data);
+            if (isTest) testCount++; else if (currentMode === 'review_mode') reviewIndex++; else combo = 0;
+            btns.forEach(b => { if(b.innerHTML === correctFormatted) b.classList.add('correct'); });
         }
         updateUI();
-        if (isTestMode && testCount >= goal) { setTimeout(showTestResult, 1000); }
-        else if (!isTestMode && currentMode !== 'review_mode' && combo >= goal) { setTimeout(() => {
-            document.getElementById('clear-title').innerText = "CLEAR!";
-            document.getElementById('clear-msg').innerText = "おめでとうございます！クリアです。";
-            showScreen('clear-screen');
-        }, 1000); }
-        else { setTimeout(generateProblem, 1000); }
+        if (isTest && testCount >= goal) setTimeout(showTestResult, 1000);
+        else if (!isTest && currentMode !== 'review_mode' && combo >= goal) setTimeout(() => showScreen('clear-screen'), 1000);
+        else setTimeout(generateProblem, 1000);
     }
 
     function updateUI() {
         const bar = document.getElementById('combo-bar'), text = document.getElementById('combo-text');
-        if (isTestMode) { bar.style.width = (testCount / goal * 100) + "%"; text.innerText = `進捗: ${testCount} / ${goal}`; } 
+        if (isTest) { bar.style.width = (testCount / goal * 100) + "%"; text.innerText = `進捗: ${testCount} / ${goal}`; } 
         else if (currentMode === 'review_mode') { bar.style.width = "100%"; text.innerText = `残り復習: ${reviewList.length}問`; } 
         else { bar.style.width = (combo / goal * 100) + "%"; text.innerText = `${combo} / ${goal}`; }
     }
 
     function showTestResult() {
-        const score = (testCorrect / goal) * 100;
-        document.getElementById('clear-title').innerText = "テスト終了！";
+        const s = (testCorrect / goal) * 100;
+        document.getElementById('clear-title').innerText = "テスト結果";
         document.getElementById('score-area').style.display = "block";
-        document.getElementById('final-score').innerText = score;
-        let ev = "";
-        if (score === 100) { ev = "完璧です！"; document.getElementById('clear-icon').innerText = "👑"; }
-        else if (score >= 80) { ev = "素晴らしい！"; document.getElementById('clear-icon').innerText = "✨"; }
-        else if (score >= 60) { ev = "合格点！"; document.getElementById('clear-icon').innerText = "👍"; }
-        else { ev = "復習が必要です！"; document.getElementById('clear-icon').innerText = "📝"; }
-        document.getElementById('eval-text').innerText = ev;
-        document.getElementById('clear-msg').innerText = `正解数: ${testCorrect} / ${goal}`;
+        document.getElementById('final-score').innerText = s;
+        document.getElementById('eval-text').innerText = s === 100 ? "完璧！伝説の数学者です。" : s >= 80 ? "優秀！あと一歩で満点。" : s >= 60 ? "合格！ミスを復習しよう。" : "もう一度基礎を固めよう！";
         showScreen('clear-screen');
     }
 </script>
