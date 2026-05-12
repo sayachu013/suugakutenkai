@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数学サバイバル：全4コース</title>
+    <style>
+        :root {
+            --primary: #4a90e2;
+            --secondary: #9b59b6;
+            --success: #2ecc71;
+            --error: #e74c3c;
+            --gold: #f1c40f;
+            --bg: #f5f7fa;
+            --dark: #34495e;
+        }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { width: 100%; max-width: 500px; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; min-height: 550px; display: flex; flex-direction: column; }
+        
+        .screen { display: none; flex-direction: column; height: 100%; }
+        .screen.active { display: flex; }
+
+        /* ホーム画面 */
+        .home-title { text-align: center; color: var(--dark); margin-bottom: 25px; }
+        .home-title h1 { font-size: 1.6rem; margin-bottom: 5px; }
+        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .mode-btn { padding: 15px; border: none; border-radius: 12px; cursor: pointer; color: white; transition: 0.3s; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .mode-btn h3 { margin: 0; font-size: 1rem; }
+        .mode-btn p { margin: 5px 0 0; opacity: 0.8; font-size: 0.75rem; }
+        .btn-expand { background: var(--primary); }
+        .btn-factor { background: var(--secondary); }
+        .btn-advanced { filter: brightness(0.7); }
+        .mode-btn:hover { transform: translateY(-3px); opacity: 0.9; }
+
+        /* ゲーム画面 */
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .back-home { background: #eee; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: bold; }
+        
+        .combo-container { background: #eee; height: 10px; border-radius: 5px; overflow: hidden; }
+        #combo-bar { width: 0%; height: 100%; background: var(--success); transition: width 0.3s; }
+        .combo-text { font-weight: bold; color: var(--success); text-align: center; margin: 10px 0; }
+
+        .problem-card { background: #fff; border: 3px solid #f0f4f8; border-radius: 15px; padding: 45px 10px; text-align: center; margin-bottom: 20px; position: relative; min-height: 120px; display: flex; align-items: center; justify-content: center; }
+        .mode-badge { position: absolute; top: 10px; left: 10px; padding: 2px 8px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 4px; font-size: 0.7rem; color: #666; }
+        .question { font-size: 1.7rem; font-weight: bold; }
+
+        .choices-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .choice-btn { padding: 12px 5px; border: 2px solid #e2e8f0; border-radius: 12px; background: white; font-size: 1rem; cursor: pointer; transition: 0.15s; font-weight: bold; min-height: 65px; }
+        .choice-btn:hover:not(:disabled) { border-color: var(--primary); }
+        .choice-btn.correct { background: var(--success) !important; color: white; border-color: var(--success); }
+        .choice-btn.wrong { background: var(--error) !important; color: white; border-color: var(--error); }
+
+        .math-text { font-family: "Times New Roman", Times, serif; font-style: italic; }
+        sup { font-style: normal; font-size: 0.7em; vertical-align: super; }
+
+        #clear-screen { text-align: center; padding-top: 50px; }
+        .gold-text { color: var(--gold); font-size: 3.5rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="home-screen" class="screen active">
+        <div class="home-title">
+            <h1>数学サバイバル</h1>
+            <p>単元を選んで10連勝を目指せ！</p>
+        </div>
+        <div class="grid-menu">
+            <button class="mode-btn btn-expand" onclick="startGame('expand_std')">
+                <h3>展開：標準</h3>
+                <p>(x+a)(x+b)形式</p>
+            </button>
+            <button class="mode-btn btn-expand btn-advanced" onclick="startGame('expand_adv')">
+                <h3>展開：応用</h3>
+                <p>係数あり・置き換え</p>
+            </button>
+            <button class="mode-btn btn-factor" onclick="startGame('factor_std')">
+                <h3>因数分解：標準</h3>
+                <p>基本3公式</p>
+            </button>
+            <button class="mode-btn btn-factor btn-advanced" onclick="startGame('factor_adv')">
+                <h3>因数分解：応用</h3>
+                <p>共通因数・係数あり</p>
+            </button>
+        </div>
+    </div>
+
+    <div id="game-screen" class="screen">
+        <div class="top-nav">
+            <button class="back-home" onclick="goHome()">◀ ホーム</button>
+            <div id="diff-label" style="font-size:0.8rem; font-weight:bold; color:#888;"></div>
+        </div>
+        <div class="progress-area">
+            <div class="combo-container"><div id="combo-bar"></div></div>
+            <div class="combo-text" id="combo-text">0 / 10</div>
+        </div>
+        <div class="problem-card">
+            <div id="mode-badge" class="mode-badge"></div>
+            <div id="question" class="question math-text"></div>
+        </div>
+        <div id="choices" class="choices-grid"></div>
+    </div>
+
+    <div id="clear-screen" class="screen">
+        <div class="gold-text">🏆</div>
+        <h2>COURSE CLEAR!</h2>
+        <p id="clear-msg">完璧にマスターしました！</p>
+        <button class="mode-btn btn-expand" onclick="goHome()" style="margin-top:20px; width:100%; text-align:center;">ホームへ戻る</button>
+    </div>
+</div>
+
+<script>
+    let combo = 0;
+    const goal = 10;
+    let currentAnswer = "";
+    let currentMode = ""; // expand_std, expand_adv, factor_std, factor_adv
+
+    function cleanMath(text) {
+        return text.toString()
+            .replace(/\^2/g, '<sup>2</sup>')
+            .replace(/\+1x/g, '+x').replace(/-1x/g, '-x')
+            .replace(/\+0x/g, '').replace(/-0x/g, '')
+            .replace(/\+-/g, '-').replace(/--/g, '+')
+            .replace(/^\+/, '').replace(/\(\+/, '(');
+    }
+
+    const rand = (min, max) => {
+        let r = Math.floor(Math.random() * (max - min + 1)) + min;
+        return r === 0 ? rand(min, max) : r;
+    };
+
+    function buildPoly(a, b, c) {
+        let term1 = a === 1 ? "x^2" : (a === -1 ? "-x^2" : a + "x^2");
+        let term2 = b === 0 ? "" : (b === 1 ? "+x" : (b === -1 ? "-x" : (b > 0 ? "+" + b : b) + "x"));
+        let term3 = c === 0 ? "" : (c > 0 ? "+" + c : c);
+        return (term1 + term2 + term3).replace(/^\+/, '');
+    }
+
+    function startGame(mode) {
+        currentMode = mode;
+        combo = 0;
+        const labels = {
+            'expand_std': '展開：標準', 'expand_adv': '展開：応用',
+            'factor_std': '因数分解：標準', 'factor_adv': '因数分解：応用'
+        };
+        document.getElementById('diff-label').innerText = labels[mode];
+        showScreen('game-screen');
+        updateUI();
+        generateProblem();
+    }
+
+    function goHome() { showScreen('home-screen'); }
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    function generateProblem() {
+        let q, a, choices = [];
+        let n1 = rand(-9, 9), n2 = rand(-9, 9);
+        
+        if (currentMode === 'expand_std') {
+            q = `(x${n1>0?'+':''}${n1})(x${n2>0?'+':''}${n2})`;
+            a = buildPoly(1, n1 + n2, n1 * n2);
+            choices = [a, buildPoly(1, n1*n2, n1+n2), buildPoly(1, -(n1+n2), n1*n2), buildPoly(1, n1+n2, -(n1*n2))];
+        } 
+        else if (currentMode === 'expand_adv') {
+            const coeff = [2, 3, 4][Math.floor(Math.random()*3)];
+            if (Math.random() > 0.5) { // (ax+b)(ax+c)
+                q = `(${coeff}x${n1>0?'+':''}${n1})(${coeff}x${n2>0?'+':''}${n2})`;
+                a = buildPoly(coeff*coeff, (n1+n2)*coeff, n1*n2);
+                choices = [a, buildPoly(coeff, (n1+n2)*coeff, n1*n2), buildPoly(coeff*coeff, n1+n2, n1*n2), buildPoly(coeff*coeff, (n1+n2)*coeff, -n1*n2)];
+            } else { // (x+a+b)(x+a-b) 形式を模した (x+n1)^2 - n2^2
+                q = `(x${n1>0?'+':''}${n1}+${Math.abs(n2)})(x${n1>0?'+':''}${n1}-${Math.abs(n2)})`;
+                a = buildPoly(1, n1*2, n1*n1 - n2*n2);
+                choices = [a, buildPoly(1, n1*2, n1*n1 + n2*n2), buildPoly(1, n1, n1*n1 - n2*n2), buildPoly(1, 0, n1*n1 - n2*n2)];
+            }
+        } 
+        else if (currentMode === 'factor_std') {
+            const s = n1 + n2, p = n1 * n2;
+            q = buildPoly(1, s, p);
+            a = (n1 === n2) ? `(x${n1>0?'+':''}${n1})^2` : (n1 === -n2) ? `(x+${Math.abs(n1)})(x-${Math.abs(n1)})` : `(x${n1>0?'+':''}${n1})(x${n2>0?'+':''}${n2})`;
+            choices = [a, `(x${-n1>0?'+':''}${-n1})(x${-n2>0?'+':''}${-n2})`, `(x+${Math.abs(p)})(x-1)`, `(x+${s})^2` ];
+        } 
+        else if (currentMode === 'factor_adv') {
+            const c = [2, 3, 5][Math.floor(Math.random()*3)];
+            const s = (n1 + n2) * c, p = (n1 * n2) * c;
+            q = buildPoly(c, s, p);
+            a = (n1 === n2) ? `${c}(x${n1>0?'+':''}${n1})^2` : `${c}(x${n1>0?'+':''}${n1})(x${n2>0?'+':''}${n2})`;
+            choices = [a, `(${c}x${n1>0?'+':''}${n1})(x${n2>0?'+':''}${n2})`, `(x${n1>0?'+':''}${n1})(x${n2>0?'+':''}${n2})`, `${c}(x${-n1>0?'+':''}${-n1})(x${-n2>0?'+':''}${-n2})` ];
+        }
+
+        currentAnswer = a;
+        document.getElementById('question').innerHTML = cleanMath(q);
+        document.getElementById('mode-badge').innerText = document.getElementById('diff-label').innerText;
+        
+        const container = document.getElementById('choices');
+        container.innerHTML = "";
+        [...new Set(choices)].sort(() => Math.random() - 0.5).forEach(c => {
+            const btn = document.createElement('button');
+            btn.className = "choice-btn math-text";
+            btn.innerHTML = cleanMath(c);
+            btn.onclick = () => check(btn, c);
+            container.appendChild(btn);
+        });
+    }
+
+    function check(btn, val) {
+        const btns = document.querySelectorAll('.choice-btn');
+        btns.forEach(b => b.disabled = true);
+        if (val === currentAnswer) {
+            btn.classList.add('correct');
+            combo++;
+            if (combo >= goal) { setTimeout(() => showScreen('clear-screen'), 600); } 
+            else { setTimeout(generateProblem, 800); }
+        } else {
+            btn.classList.add('wrong');
+            combo = 0;
+            btns.forEach(b => { if(b.innerHTML === cleanMath(currentAnswer)) b.classList.add('correct'); });
+            setTimeout(generateProblem, 1600);
+        }
+        updateUI();
+    }
+
+    function updateUI() {
+        document.getElementById('combo-bar').style.width = (combo / goal * 100) + "%";
+        document.getElementById('combo-text').innerText = `${combo} / ${goal}`;
+    }
+</script>
+
+</body>
+</html>
