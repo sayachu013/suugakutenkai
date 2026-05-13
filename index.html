@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数学サバイバル：中学3年・最終安定版</title>
+    <title>数学サバイバル：中学3年・完全解説版</title>
     <style>
         :root {
             --primary: #4a90e2; --secondary: #9b59b6; --success: #2ecc71;
@@ -11,7 +11,7 @@
             --review: #ff7675; --adv-color: #ff9f43; --test: #1abc9c;
         }
         body { font-family: 'Helvetica Neue', Arial, sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .container { width: 100%; max-width: 500px; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); min-height: 600px; display: flex; flex-direction: column; }
+        .container { width: 100%; max-width: 500px; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); min-height: 620px; display: flex; flex-direction: column; }
         .screen { display: none; flex-direction: column; height: 100%; }
         .screen.active { display: flex; }
         .home-title { text-align: center; color: var(--dark); margin-bottom: 20px; }
@@ -30,12 +30,17 @@
         .combo-container { background: #eee; height: 10px; border-radius: 5px; overflow: hidden; }
         #combo-bar { width: 0%; height: 100%; background: var(--success); transition: width 0.3s; }
         .combo-text { font-weight: bold; color: var(--success); text-align: center; margin: 5px 0; font-size: 0.85rem; }
-        .problem-card { background: #fff; border: 3px solid #f0f4f8; border-radius: 15px; padding: 40px 10px; text-align: center; margin-bottom: 20px; min-height: 160px; display: flex; align-items: center; justify-content: center; position: relative; }
-        .question { font-size: 1.3rem; font-weight: bold; }
+        .problem-card { background: #fff; border: 3px solid #f0f4f8; border-radius: 15px; padding: 20px 10px; text-align: center; margin-bottom: 20px; min-height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        .question { font-size: 1.3rem; font-weight: bold; margin-bottom: 10px; }
+        .ans-feedback { width: 100%; text-align: center; font-size: 0.85rem; padding: 10px; border-radius: 8px; display: none; margin-top: 10px; }
+        .feedback-correct { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+        .feedback-wrong { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+        .hint-text { color: #555; font-size: 0.8rem; margin-top: 8px; border-top: 1px dashed #ccc; padding-top: 8px; }
         .choices-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .choice-btn { padding: 10px; border: 2px solid #e2e8f0; border-radius: 12px; background: white; font-size: 0.85rem; cursor: pointer; min-height: 80px; font-weight: bold; }
-        .choice-btn.correct { background: var(--success) !important; color: white; }
-        .choice-btn.wrong { background: var(--error) !important; color: white; }
+        .choice-btn.correct { background: var(--success) !important; color: white; border-color: var(--success); }
+        .choice-btn.wrong { background: var(--error) !important; color: white; border-color: var(--error); }
+        .next-btn { display: none; width: 100%; margin-top: 15px; padding: 15px; background: var(--dark); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1rem; }
         .math-text { font-family: "Times New Roman", Times, serif; font-style: italic; }
         .frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: 0.85em; margin: 0 2px; }
         .frac .num { border-bottom: 1px solid currentColor; padding: 0 2px; line-height: 1.1; }
@@ -49,7 +54,7 @@
     <div id="home-screen" class="screen active">
         <div class="home-title"><h1>数学サバイバル</h1><p>中学3年 展開・因数分解</p></div>
         <div class="system-guide">
-            <p style="margin: 5px 10px;">• <strong>10問連続正解</strong>でクリア！<br>• ミスした問題は「復習モード」へ保存されます。</p>
+            <p style="margin: 5px 10px;">• <strong>10問連続正解</strong>でクリア！<br>• ミスしても途中式で確認できます。</p>
         </div>
         <div class="grid-menu">
             <button class="mode-btn btn-std" onclick="startGame('expand_std')"><h3>展開：標準</h3><p>基本公式</p></button>
@@ -62,10 +67,18 @@
     </div>
 
     <div id="game-screen" class="screen">
-        <div class="top-nav"><button class="back-home" onclick="goHome()">◀ ホーム</button><div id="diff-label" style="font-size:0.7rem; font-weight:bold; color:#888;"></div></div>
+        <div class="top-nav"><button class="back-home" onclick="goHome()">◀ ホーム</button></div>
         <div class="progress-area"><div class="combo-container"><div id="combo-bar"></div></div><div class="combo-text" id="combo-text">0 / 10</div></div>
-        <div class="problem-card"><div id="question" class="question math-text"></div></div>
+        <div class="problem-card">
+            <div id="question" class="question math-text"></div>
+            <div id="ans-feedback" class="ans-feedback">
+                <div id="judge-label" style="font-weight:bold; margin-bottom:4px;"></div>
+                <div>正解：<span id="correct-val" class="math-text"></span></div>
+                <div id="hint-area" class="hint-text math-text"></div>
+            </div>
+        </div>
         <div id="choices" class="choices-grid"></div>
+        <button id="next-btn" class="next-btn" onclick="generateProblem()">次へ進む ▶</button>
     </div>
 
     <div id="clear-screen" class="screen" style="text-align:center; padding-top:40px;">
@@ -80,36 +93,43 @@
 </div>
 
 <script>
-    let combo = 0, goal = 10, currentAnswerNorm = "", currentMode = "", reviewList = [], history = [];
+    let combo = 0, goal = 10, currentAnswerNorm = "", currentAnswerRaw = "", currentHint = "", currentMode = "", reviewList = [], historyList = [];
     let isTest = false, testCount = 0, testCorrect = 0, testQueue = [];
 
-    const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
-    const reduce = (n, d) => { let common = Math.abs(gcd(n, d)); return [n/common, d/common]; };
+    const gcd = (a, b) => b === 0 ? Math.abs(a) : gcd(b, a % b);
+    const reduce = (n, d) => { let common = gcd(n, d); return [n/common, d/common]; };
     const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+    const nzRand = (min, max) => { let r = rand(min, max); return r === 0 ? (max >= 1 ? 1 : -1) : r; };
 
     function formatMath(t) {
         if(!t) return "";
-        return t.toString().replace(/\^2/g, '<sup>2</sup>').replace(/\b1([a-z\(y])/g, '$1').replace(/\b-1([a-z\(y])/g, '-$1').replace(/(\d+)\/(\d+)/g, '<span class="frac"><span class="num">$1</span><span class="den">$2</span></span>').replace(/\+-/g, '-').replace(/--/g, '+');
+        return t.toString()
+            .replace(/[+-]0[a-zxy](\^2)?/g, "")
+            .replace(/(^|[+-])1([a-zxy\(])/g, "$1$2")
+            .replace(/\+-/g, "-").replace(/--/g, "+")
+            .replace(/^\+/, "")
+            .replace(/\^2/g, '<sup>2</sup>')
+            .replace(/(\d+)\/(\d+)/g, '<span class="frac"><span class="num">$1</span><span class="den">$2</span></span>');
     }
 
     function normalize(s) {
         if (!s) return "";
-        let res = s.toString().replace(/\s/g, '').replace(/<sup>2<\/sup>/g, '^2');
-        if (res.includes(')(')) return res.split(')(').map(p => p.replace(/[\(\)]/g, '')).sort().join(')(');
+        let res = s.toString().replace(/\s/g, '').replace(/<sup>2<\/sup>/g, '^2').replace(/<[^>]+>/g, '');
+        if (res.includes(')(')) {
+            let parts = res.match(/\([^)]+\)/g);
+            if (parts) return parts.sort().join('');
+        }
         return res;
     }
 
     function startGame(m) {
         isTest = false; currentMode = m; combo = 0; goal = 10;
         document.getElementById('score-area').style.display = "none";
-        document.getElementById('clear-title').innerText = "サバイバル成功！";
         showScreen('game-screen'); updateUI(); generateProblem();
     }
 
     function startTest() {
         isTest = true; testCount = 0; testCorrect = 0; goal = 20;
-        document.getElementById('score-area').style.display = "none";
-        document.getElementById('clear-title').innerText = "テスト完了！";
         testQueue = [];
         ['expand_std', 'expand_adv', 'factor_std', 'factor_adv'].forEach(m => { for(let i=0; i<5; i++) testQueue.push(m); });
         testQueue.sort(() => Math.random() - 0.5);
@@ -125,96 +145,113 @@
     }
 
     function generateProblem() {
-        // 終了判定を最優先
+        document.getElementById('ans-feedback').style.display = "none";
+        document.getElementById('next-btn').style.display = "none";
+        document.getElementById('choices').style.display = "grid";
+
         if (isTest && testCount >= goal) { showResult(); return; }
         if (!isTest && currentMode !== 'review_mode' && combo >= goal) { showResult(); return; }
         if (currentMode === 'review_mode' && reviewList.length === 0) { goHome(); return; }
 
         let m = isTest ? testQueue[testCount] : currentMode;
         if (currentMode === 'review_mode') {
-            let p = reviewList[0]; setupUI(p.q, p.a, p.choices); return;
+            let p = reviewList[0]; setupUI(p.q, p.a, p.choices, p.h); return;
         }
 
         let res, attempts = 0;
-        // フリーズ防止のため試行回数を制限
-        while (attempts < 30) {
+        while (attempts < 50) {
             res = buildProblemData(m);
-            if (!history.includes(res.q)) break;
+            if (!historyList.includes(res.q)) break;
             attempts++;
         }
-        history.push(res.q); if(history.length > 15) history.shift();
-        setupUI(res.q, res.a, res.choices);
+        historyList.push(res.q); if(historyList.length > 10) historyList.shift();
+        setupUI(res.q, res.a, res.choices, res.h);
     }
 
     function buildProblemData(m) {
-        let q, correct, wSet = new Set();
+        let q, correct, hint = "", wSet = new Set();
         if (m === 'expand_std') {
             let t = rand(0, 2);
             if (t === 0) {
-                let n1 = rand(-6, 6), n2 = rand(-6, 6); if(n1===0) n1=1; if(n1===n2) n2++;
-                q = `(x${n1>0?'+':''}${n1})(x${n2>0?'+':''}${n2})`;
-                correct = `x^2${(n1+n2)>0?'+':''}${n1+n2===0?'':(n1+n2)+'x'}${n1*n2>0?'+':''}${n1*n2===0?'':n1*n2}`;
-                wSet.add(`x^2+${n1*n2}`).add(`x^2+${n1+n2}x`).add(`x^2-${n1*n2}`);
+                let a = nzRand(-8, 8), b = nzRand(-8, 8); if(a===-b) b++;
+                q = `(x${a>0?'+':''}${a})(x${b>0?'+':''}${b})`;
+                correct = `x^2${(a+b)>0?'+':''}${a+b}x${a*b>0?'+':''}${a*b}`;
+                hint = `x^2 + (${a}${b>0?'+':''}${b})x + (${a})×(${b})`;
             } else if (t === 1) {
-                let n = rand(2, 9); q = `(x+${n})^2`;
-                correct = `x^2+${2*n}x+${n*n}`;
-                wSet.add(`x^2+${n*n}`).add(`x^2+${n}x+${n*n}`).add(`x^2+${2*n}x+${2*n}`);
+                let a = nzRand(-9, 9);
+                q = `(x${a>0?'+':''}${a})^2`;
+                correct = `x^2${2*a>0?'+':''}${2*a}x+${a*a}`;
+                hint = `x^2 + 2×(${a})×x + (${a})^2`;
             } else {
-                let n = rand(2, 10); q = `(x+${n})(x-${n})`;
-                correct = `x^2-${n*n}`;
-                wSet.add(`x^2+${n*n}`).add(`x^2-${n}`).add(`x^2-${2*n}`);
+                let a = rand(2, 12);
+                q = `(x+${a})(x-${a})`;
+                correct = `x^2-${a*a}`;
+                hint = `x^2 - (${a})^2`;
             }
         } else if (m === 'expand_adv') {
-            if (Math.random() > 0.5) {
-                let n = rand(2, 5); q = `(x+y+${n})(x+y-${n})`;
-                correct = `(x+y)^2-${n*n}`;
-                wSet.add(`(x+y)^2+${n*n}`).add(`x^2+y^2-${n*n}`).add(`(x+y+${n})^2`);
+            let t = rand(0, 1);
+            if (t === 0) {
+                let a = rand(2, 6);
+                q = `(x+y+${a})(x+y-${a})`;
+                correct = `x^2+2xy+y^2-${a*a}`;
+                hint = `(x+y)^2 - ${a}^2 = x^2+2xy+y^2 - ${a*a}`;
             } else {
                 let d = [2, 4, 5][rand(0, 2)];
                 let [rn, rd] = reduce(2, d), [sn, sd] = reduce(1, d*d);
                 q = `(x+1/${d})^2`;
-                correct = `x^2+${rn}/${rd}x+${sn}/${sd}`;
-                wSet.add(`x^2+1/${d}x+${sn}/${sd}`).add(`x^2+${rn}/${rd}x+1/${d}`).add(`x^2+${sn}/${sd}`);
+                let mid = rd === 1 ? `${rn}x` : `${rn}/${rd}x`;
+                correct = `x^2+${mid}+1/${sd}`;
+                hint = `x^2 + 2×(1/${d})x + (1/${d})^2`;
             }
         } else if (m === 'factor_std') {
-            let n1 = rand(-6, 6), n2 = rand(-6, 6); if(n1===0) n1=1; if(n2===0) n2=-1;
-            q = `x^2${(n1+n2)>0?'+':''}${n1+n2===0?'':(n1+n2)+'x'}${n1*n2>0?'+':''}${n1*n2===0?'':n1*n2}`;
-            correct = (n1===n2) ? `(x${n1>0?'+':''}${n1})^2` : `(x${n1>0?'+':''}${n1})(x${n2>0?'+':''}${n2})`;
-            wSet.add(`(x-${n1})(x-${n2})`).add(`(x+${n1*n2})(x+1)`).add(`x(x+${n1+n2})`);
+            let t = rand(0, 2);
+            if (t === 0) {
+                let a = nzRand(-7, 7), b = nzRand(-7, 7); if(a===b || a===-b) b+=2;
+                q = `x^2${(a+b)>0?'+':''}${a+b}x${a*b>0?'+':''}${a*b}`;
+                correct = `(x${a>0?'+':''}${a})(x${b>0?'+':''}${b})`;
+                hint = `和が${a+b}, 積が${a*b}になる2数は ${a} と ${b}`;
+            } else if (t === 1) {
+                let a = nzRand(-8, 8);
+                q = `x^2${2*a>0?'+':''}${2*a}x+${a*a}`;
+                correct = `(x${a>0?'+':''}${a})^2`;
+                hint = `x^2 + 2×(${a})x + (${a})^2 = (x${a>0?'+':''}${a})^2`;
+            } else {
+                let a = rand(2, 12);
+                q = `x^2-${a*a}`;
+                correct = `(x+${a})(x-${a})`;
+                hint = `x^2 - ${a}^2 = (x+${a})(x-${a})`;
+            }
         } else {
             let t = rand(0, 1);
             if (t === 0) {
-                let k = rand(2, 3), n = [4, 9, 16][rand(0, 2)];
-                let sq = Math.sqrt(n); q = `${k}x^2-${k*n}`;
-                correct = `${k}(x+${sq})(x-${sq})`;
-                wSet.add(`${k}(x^2-${n})`).add(`${k}(x-${sq})^2`).add(`(x+${sq})(x-${sq})`);
+                let k = rand(2, 3), a = rand(2, 4);
+                q = `${k}x^2-${k*a*a}`;
+                correct = `${k}(x+${a})(x-${a})`;
+                hint = `${k}(x^2 - ${a*a}) = ${k}(x+${a})(x-${a})`;
             } else {
-                let n = [4, 9, 16][rand(0, 2)], sq = Math.sqrt(n);
-                q = `(x+y)^2-${n}`;
+                let a_val = [4, 9, 16][rand(0, 2)], sq = Math.sqrt(a_val);
+                q = `(x+y)^2-${a_val}`;
                 correct = `(x+y+${sq})(x+y-${sq})`;
-                wSet.add(`(x+y-${sq})^2`).add(`(x+y+${n})(x+y-1)`).add(`(x-y+${sq})(x-y-${sq})`);
+                hint = `(x+y)^2 - ${sq}^2 = (x+y+${sq})(x+y-${sq})`;
             }
         }
-
         let choices = [correct];
-        let nSet = new Set([normalize(correct)]);
-        for (let w of wSet) {
-            if (!nSet.has(normalize(w))) { nSet.add(normalize(w)); choices.push(w); }
-        }
-        const back = ["(x+1)(x-1)", "x^2+1", "x(x+1)", "(x+1)^2"];
-        for (let b of back) {
+        let normalizedSet = new Set([normalize(correct)]);
+        const filler = ["(x+1)^2", "x^2-1", "x(x+1)", "x^2+2x+1", "(x-2)(x+2)"];
+        for (let f of filler) {
             if (choices.length >= 4) break;
-            if (!nSet.has(normalize(b))) { nSet.add(normalize(b)); choices.push(b); }
+            if (!normalizedSet.has(normalize(f))) { normalizedSet.add(normalize(f)); choices.push(f); }
         }
-        return { q, a: correct, choices: choices.slice(0, 4) };
+        return { q, a: correct, choices: choices.slice(0, 4), h: hint };
     }
 
-    function setupUI(q, a, ch) {
-        currentAnswerNorm = normalize(a);
+    function setupUI(q, a, ch, h) {
+        currentAnswerRaw = a; currentAnswerNorm = normalize(a); currentHint = h;
         document.getElementById('question').innerHTML = formatMath(q);
         const container = document.getElementById('choices');
         container.innerHTML = "";
-        ch.sort(() => Math.random() - 0.5).forEach(val => {
+        let shuffled = [...ch].sort(() => Math.random() - 0.5);
+        shuffled.forEach(val => {
             const btn = document.createElement('button');
             btn.className = "choice-btn math-text";
             btn.innerHTML = formatMath(val);
@@ -223,21 +260,29 @@
                 btns.forEach(b => b.disabled = true);
                 let isCorrect = (normalize(val) === currentAnswerNorm);
                 
+                const feedback = document.getElementById('ans-feedback');
+                const label = document.getElementById('judge-label');
+                feedback.style.display = "block";
+                feedback.className = isCorrect ? "ans-feedback feedback-correct" : "ans-feedback feedback-wrong";
+                label.innerText = isCorrect ? "正解！" : "不正解...";
+                
+                document.getElementById('correct-val').innerHTML = formatMath(currentAnswerRaw);
+                document.getElementById('hint-area').innerHTML = formatMath(currentHint);
+                document.getElementById('next-btn').style.display = "block";
+                document.getElementById('choices').style.display = "none";
+
                 if (isCorrect) {
                     btn.classList.add('correct');
-                    if (isTest) { testCorrect++; testCount++; }
-                    else if (currentMode === 'review_mode') { reviewList.shift(); }
-                    else { combo++; }
+                    if (isTest) testCorrect++;
+                    if (currentMode === 'review_mode') reviewList.shift(); else if (!isTest) combo++;
                 } else {
                     btn.classList.add('wrong');
-                    if (!reviewList.some(p => p.q === q)) reviewList.push({q, a, choices:ch});
-                    if (isTest) testCount++;
-                    else if (currentMode === 'review_mode') { reviewList.push(reviewList.shift()); }
-                    else { combo = 0; }
+                    if (!reviewList.some(p => p.q === q)) reviewList.push({q, a, choices:ch, h});
+                    if (!isTest) combo = 0;
                     btns.forEach(b => { if(normalize(b.innerHTML) === currentAnswerNorm) b.classList.add('correct'); });
                 }
+                if (isTest) testCount++;
                 updateUI();
-                setTimeout(generateProblem, 800);
             };
             container.appendChild(btn);
         });
@@ -245,8 +290,8 @@
 
     function updateUI() {
         const bar = document.getElementById('combo-bar'), text = document.getElementById('combo-text');
-        if (isTest) { bar.style.width = (testCount / goal * 100) + "%"; text.innerText = `テスト: ${testCount} / ${goal}`; } 
-        else if (currentMode === 'review_mode') { bar.style.width = "100%"; text.innerText = `残り復習: ${reviewList.length}問`; } 
+        if (isTest) { bar.style.width = (testCount / goal * 100) + "%"; text.innerText = `テスト: ${testCount} / ${goal}`; }
+        else if (currentMode === 'review_mode') { bar.style.width = "100%"; text.innerText = `残り復習: ${reviewList.length}問`; }
         else { bar.style.width = (combo / goal * 100) + "%"; text.innerText = `${combo} / ${goal}`; }
     }
 
